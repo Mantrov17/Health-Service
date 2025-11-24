@@ -1,0 +1,132 @@
+.page {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.page h1 {
+  color: #0277bd;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.profileCard {
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 4px 15px rgba(33, 150, 243, 0.1);
+  border: 1px solid #e1f5fe;
+}
+
+.avatarSection {
+  text-align: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #b3e5fc;
+}
+
+.avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4fc3f7 0%, #29b6f6 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  margin: 0 auto 15px;
+  box-shadow: 0 4px 12px rgba(41, 182, 246, 0.3);
+}
+
+.avatarSection h2 {
+  color: #0277bd;
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.infoSection {
+  margin-bottom: 30px;
+}
+
+.infoItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #e1f5fe;
+}
+
+.infoItem:last-child {
+  border-bottom: none;
+}
+
+.label {
+  color: #01579b;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.value {
+  color: #0288d1;
+  font-size: 14px;
+}
+
+.actions {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.editButton {
+  background: linear-gradient(135deg, #4fc3f7 0%, #29b6f6 100%);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(41, 182, 246, 0.3);
+}
+
+.editButton:hover {
+  background: linear-gradient(135deg, #29b6f6 0%, #0288d1 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(41, 182, 246, 0.4);
+}
+
+.logoutButton {
+  background: transparent;
+  color: #0277bd;
+  border: 2px solid #4fc3f7;
+  padding: 12px 24px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.logoutButton:hover {
+  background: rgba(79, 195, 247, 0.1);
+  transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+  .profileCard {
+    padding: 20px;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+
+  .infoItem {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+
+  .label, .value {
+    font-size: 13px;
+  }
+}

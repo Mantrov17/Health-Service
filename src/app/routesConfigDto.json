@@ -1,0 +1,28 @@
+{
+  "routes": [
+    {
+      "path": "/",
+      "name": "Главная",
+      "key": "home",
+      "component": "HomePage"
+    },
+    {
+      "path": "/doctors",
+      "name": "Записаться на прием",
+      "key": "booking",
+      "component": "DoctorListPage"
+    },
+    {
+      "path": "/appointments",
+      "name": "Мои записи",
+      "key": "appointments",
+      "component": "AppointmentListPage"
+    },
+    {
+      "path": "/profile",
+      "name": "Профиль",
+      "key": "profile",
+      "component": "ProfilePage"
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+import React from "react";
+import styles from "./styles.module.scss";
+
+export const HomePage: React.FC = () => {
+  return (
+    <div className={styles.homePage}>
+      <div className={styles.heroSection}>
+        <h1>Добро пожаловать в медицинский центр "Здоровье"</h1>
+        <p>Ваше здоровье - наш главный приоритет</p>
+
+        <div className={styles.features}>
+          <div className={styles.featureCard}>
+            <h3>👨‍⚕️ Квалифицированные врачи</h3>
+            <p>Более 50 специалистов различных направлений</p>
+          </div>
+          <div className={styles.featureCard}>
+            <h3>🕒 Удобное время</h3>
+            <p>Работаем с 8:00 до 20:00 без выходных</p>
+          </div>
+          <div className={styles.featureCard}>
+            <h3>💻 Онлайн-запись</h3>
+            <p>Записывайтесь на прием в любое время</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};

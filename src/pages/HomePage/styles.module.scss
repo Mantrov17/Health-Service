@@ -1,0 +1,71 @@
+.homePage {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.heroSection {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.heroSection h1 {
+  color: #0277bd;
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+.heroSection p {
+  color: #0288d1;
+  font-size: 1.2rem;
+  margin-bottom: 40px;
+}
+
+.features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+  margin-top: 50px;
+}
+
+.featureCard {
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(33, 150, 243, 0.1);
+  transition: all 0.3s ease;
+  border: 1px solid #e1f5fe;
+}
+
+.featureCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(33, 150, 243, 0.15);
+}
+
+.featureCard h3 {
+  color: #0277bd;
+  margin-bottom: 15px;
+  font-size: 1.3rem;
+}
+
+.featureCard p {
+  color: #0288d1;
+  margin: 0;
+  line-height: 1.5;
+}
+
+@media (max-width: 768px) {
+  .heroSection h1 {
+    font-size: 2rem;
+  }
+
+  .features {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .featureCard {
+    padding: 20px;
+  }
+}

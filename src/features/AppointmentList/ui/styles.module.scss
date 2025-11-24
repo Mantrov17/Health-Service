@@ -1,0 +1,51 @@
+.list {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.item {
+  border: 1px solid #e1f5fe;
+  border-radius: 8px;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  background: linear-gradient(135deg, #f8fdff 0%, #e3f2fd 100%);
+  transition: all 0.3s ease;
+}
+
+.info h3 {
+  margin: 0 0 10px 0;
+  color: #0277bd;
+}
+
+.info p {
+  margin: 5px 0;
+  color: #0288d1;
+}
+
+.info strong {
+  color: #01579b;
+}
+
+.actions {
+  display: flex;
+  align-items: flex-start;
+}
+
+.cancelButton {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
