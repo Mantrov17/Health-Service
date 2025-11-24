@@ -5,12 +5,14 @@ import { mockProfileInfo } from "../../__mockData__/mockProfileInfo.ts";
 export const ProfilePage: React.FC = () => {
   return (
     <div className={styles.page}>
-      <h1>Мой профиль</h1>
+      <div className={styles.header}>
+        <h1 className={styles.title}>Мой профиль</h1>
+      </div>
 
       <div className={styles.profileCard}>
         <div className={styles.avatarSection}>
           <div className={styles.avatar}>{mockProfileInfo.avatar}</div>
-          <h2>{mockProfileInfo.name}</h2>
+          <h2 className={styles.name}>{mockProfileInfo.name}</h2>
         </div>
 
         <div className={styles.infoSection}>

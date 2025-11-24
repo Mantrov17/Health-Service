@@ -1,71 +1,170 @@
 .homePage {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 40px 20px;
+  padding: 3rem 2rem;
 }
 
-.heroSection {
+.hero {
   text-align: center;
-  margin-bottom: 50px;
+  padding: 4rem 0;
+  border-bottom: 1px solid #e0e0e0;
+  margin-bottom: 4rem;
 }
 
-.heroSection h1 {
-  color: #0277bd;
+.heroTitle {
   font-size: 2.5rem;
-  margin-bottom: 20px;
-  font-weight: 600;
+  font-weight: 300;
+  color: #333;
+  margin: 0 0 1rem;
+  line-height: 1.2;
 }
 
-.heroSection p {
-  color: #0288d1;
+.heroSubtitle {
   font-size: 1.2rem;
-  margin-bottom: 40px;
+  color: #666;
+  margin: 0 0 3rem;
+  font-weight: 400;
+}
+
+.ctaButtons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  align-items: center;
+}
+
+.ctaButton {
+  background: #1976d2;
+  color: white;
+  padding: 0.75rem 2rem;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  border: 1px solid #1976d2;
+
+  &:hover {
+    background: #1565c0;
+    transform: translateY(-1px);
+  }
+}
+
+.ctaButtonSecondary {
+  background: transparent;
+  color: #1976d2;
+  padding: 0.75rem 2rem;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  border: 1px solid #1976d2;
+
+  &:hover {
+    background: #f5f5f5;
+    transform: translateY(-1px);
+  }
 }
 
 .features {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 30px;
-  margin-top: 50px;
+  gap: 2rem;
+  margin-top: 2rem;
 }
 
-.featureCard {
-  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
-  padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(33, 150, 243, 0.1);
-  transition: all 0.3s ease;
-  border: 1px solid #e1f5fe;
+.feature {
+  text-align: center;
+  padding: 2rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: #1976d2;
+    transform: translateY(-2px);
+  }
 }
 
-.featureCard:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 25px rgba(33, 150, 243, 0.15);
+.featureIcon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  display: block;
 }
 
-.featureCard h3 {
-  color: #0277bd;
-  margin-bottom: 15px;
-  font-size: 1.3rem;
+.feature h3 {
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: #333;
+  margin: 0 0 1rem;
 }
 
-.featureCard p {
-  color: #0288d1;
+.feature p {
+  color: #666;
+  line-height: 1.6;
   margin: 0;
-  line-height: 1.5;
+  font-size: 0.95rem;
 }
 
+/* Адаптивность */
 @media (max-width: 768px) {
-  .heroSection h1 {
+  .homePage {
+    padding: 2rem 1rem;
+  }
+
+  .hero {
+    padding: 2rem 0;
+    margin-bottom: 2rem;
+  }
+
+  .heroTitle {
     font-size: 2rem;
+  }
+
+  .heroSubtitle {
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+  }
+
+  .ctaButtons {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .ctaButton,
+  .ctaButtonSecondary {
+    width: 100%;
+    max-width: 280px;
+    text-align: center;
   }
 
   .features {
     grid-template-columns: 1fr;
-    gap: 20px;
+    gap: 1.5rem;
   }
 
-  .featureCard {
-    padding: 20px;
+  .feature {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .heroTitle {
+    font-size: 1.75rem;
+  }
+
+  .heroSubtitle {
+    font-size: 1rem;
+  }
+
+  .featureIcon {
+    font-size: 2rem;
+  }
+
+  .feature h3 {
+    font-size: 1.1rem;
+  }
+
+  .feature p {
+    font-size: 0.9rem;
   }
 }

@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-
 import { useAppointments } from "../../features/AppointmentList/lib/useAppointments.ts";
 import styles from "./styles.module.scss";
 import type { AppointmentFormData, Doctor } from "../../types.ts";
@@ -23,8 +22,12 @@ export const DoctorListPage: React.FC = () => {
 
   return (
     <div className={styles.page}>
-      <h1>Запись на прием к врачу</h1>
-      <p>Выберите специалиста и удобное время для записи</p>
+      <div className={styles.header}>
+        <h1 className={styles.title}>Запись на прием к врачу</h1>
+        <p className={styles.subtitle}>
+          Выберите специалиста и удобное время для записи
+        </p>
+      </div>
 
       <div className={styles.doctorsGrid}>
         {mockDoctors.map((doctor) => (

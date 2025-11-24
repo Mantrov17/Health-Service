@@ -1,6 +1,7 @@
 import React from "react";
 import type { Appointment, Doctor } from "../../../types.ts";
 import styles from "./styles.module.scss";
+
 interface AppointmentListProps {
   appointments: Appointment[];
   doctors: Doctor[];
@@ -19,15 +20,15 @@ export const AppointmentList: React.FC<AppointmentListProps> = ({
   if (appointments.length === 0) {
     return (
       <div className={styles.list}>
-        <h2>Мои записи</h2>
-        <p>У вас нет активных записей</p>
+        <h2 className={styles.title}>Мои записи</h2>
+        <p className={styles.emptyMessage}>У вас нет активных записей</p>
       </div>
     );
   }
 
   return (
     <div className={styles.list}>
-      <h2>Мои записи ({appointments.length})</h2>
+      <h2 className={styles.title}>Мои записи ({appointments.length})</h2>
 
       <div className={styles.container}>
         {appointments.map((appointment) => {
@@ -36,28 +37,37 @@ export const AppointmentList: React.FC<AppointmentListProps> = ({
           return (
             <div key={appointment.id} className={styles.item}>
               <div className={styles.info}>
-                <h3>Прием у {doctor?.name || "Неизвестный врач"}</h3>
-                <p>
-                  <strong>Специализация:</strong>{" "}
-                  {doctor?.specialization || "Не указана"}
-                </p>
-                <p>
-                  <strong>Дата:</strong> {appointment.date}
-                </p>
-                <p>
-                  <strong>Время:</strong> {appointment.time}
-                </p>
-                <p>
-                  <strong>Пациент:</strong> {appointment.patientName}
-                </p>
-                <p>
-                  <strong>Телефон:</strong> {appointment.patientPhone}
-                </p>
-                {appointment.notes && (
-                  <p>
-                    <strong>Примечания:</strong> {appointment.notes}
-                  </p>
-                )}
+                <h3 className={styles.doctorName}>
+                  Прием у {doctor?.name || "Неизвестный врач"}
+                </h3>
+                <div className={styles.details}>
+                  <div className={styles.detail}>
+                    <span className={styles.label}>Специализация:</span>
+                    <span>{doctor?.specialization || "Не указана"}</span>
+                  </div>
+                  <div className={styles.detail}>
+                    <span className={styles.label}>Дата:</span>
+                    <span>{appointment.date}</span>
+                  </div>
+                  <div className={styles.detail}>
+                    <span className={styles.label}>Время:</span>
+                    <span>{appointment.time}</span>
+                  </div>
+                  <div className={styles.detail}>
+                    <span className={styles.label}>Пациент:</span>
+                    <span>{appointment.patientName}</span>
+                  </div>
+                  <div className={styles.detail}>
+                    <span className={styles.label}>Телефон:</span>
+                    <span>{appointment.patientPhone}</span>
+                  </div>
+                  {appointment.notes && (
+                    <div className={styles.detail}>
+                      <span className={styles.label}>Примечания:</span>
+                      <span>{appointment.notes}</span>
+                    </div>
+                  )}
+                </div>
               </div>
 
               <div className={styles.actions}>
