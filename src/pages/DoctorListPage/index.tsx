@@ -22,8 +22,6 @@ export const DoctorListPage: React.FC = () => {
     };
 
     createAppointment(appointmentData);
-    setSelectedDoctor(null);
-    alert("Запись успешно создана!");
   };
 
   return (

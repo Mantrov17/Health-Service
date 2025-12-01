@@ -1,4 +1,3 @@
-import React from "react";
 import type { Doctor } from "../../../types.ts";
 import styles from "./styles.module.scss";
 import { Controller, useForm } from "react-hook-form";
@@ -6,17 +5,17 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { validationSchema } from "../lib/validationSchema.ts";
 import { formatPhoneNumber } from "../../../shared/formatPhoneNumber.ts";
 import type { AppointmentFormValues } from "../model/types.ts";
+import { useState } from "react";
+import { Link } from "react-router-dom";
 
-interface AppointmentFormProps {
-  doctor: Doctor;
-  onSubmit: (data: AppointmentFormValues) => void;
-  onCancel: () => void;
-}
-
-export const AppointmentForm: React.FC<AppointmentFormProps> = ({
+export const AppointmentForm = ({
   doctor,
   onSubmit,
   onCancel,
+}: {
+  doctor: Doctor;
+  onSubmit: (data: AppointmentFormValues) => void;
+  onCancel: () => void;
 }) => {
   const {
     control,
@@ -27,13 +26,43 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
     resolver: yupResolver(validationSchema),
   });
 
+  const [isSuccess, setIsSuccess] = useState(false);
   const selectedDate = watch("date");
   const availableDates = Object.keys(doctor.workingHours);
   const availableTime = selectedDate ? doctor.workingHours[selectedDate] : [];
 
-  const onFormSubmit = (data: AppointmentFormValues) => {
+  const onFormSubmit = async (data: AppointmentFormValues) => {
     onSubmit({ ...data });
+    setIsSuccess(true);
   };
+
+  if (isSuccess) {
+    return (
+      <div className={styles.overlay}>
+        <div className={`${styles.form} ${styles.successForm}`}>
+          <h2 className={styles.successTitle}>Запись успешно создана</h2>
+          <div className={styles.successIcon}>✓</div>
+
+          <div className={styles.successActions}>
+            <Link
+              to="/appointments"
+              onClick={onCancel}
+              className={styles.appointmentsLink}
+            >
+              Перейти к моим записям
+            </Link>
+            <button
+              type="button"
+              onClick={onCancel}
+              className={styles.successButton}
+            >
+              Закрыть
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.overlay}>
