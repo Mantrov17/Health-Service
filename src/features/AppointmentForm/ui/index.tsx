@@ -1,29 +1,17 @@
 import React from "react";
-import type { AppointmentFormData, Doctor } from "../../../types.ts";
+import type { Doctor } from "../../../types.ts";
 import styles from "./styles.module.scss";
 import { Controller, useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { validationSchema } from "../lib/validationSchema.ts";
+import { formatPhoneNumber } from "../../../shared/formatPhoneNumber.ts";
+import type { AppointmentFormValues } from "../model/types.ts";
 
 interface AppointmentFormProps {
   doctor: Doctor;
-  onSubmit: (data: AppointmentFormData) => void;
+  onSubmit: (data: AppointmentFormValues) => void;
   onCancel: () => void;
 }
-
-const formatPhoneNumber = (value: string): string => {
-  if (!value) return value;
-
-  const phoneNumber = value.replace(/[^\d]/g, "");
-  const phoneNumberLength = phoneNumber.length;
-
-  if (phoneNumberLength < 2) return `+7${phoneNumber}`;
-  if (phoneNumberLength < 5) return `+7 (${phoneNumber.slice(1, 4)}`;
-  if (phoneNumberLength < 8)
-    return `+7 (${phoneNumber.slice(1, 4)}) ${phoneNumber.slice(4, 7)}`;
-  if (phoneNumberLength < 10)
-    return `+7 (${phoneNumber.slice(1, 4)}) ${phoneNumber.slice(4, 7)}-${phoneNumber.slice(7, 9)}`;
-
-  return `+7 (${phoneNumber.slice(1, 4)}) ${phoneNumber.slice(4, 7)}-${phoneNumber.slice(7, 9)}-${phoneNumber.slice(9, 11)}`;
-};
 
 export const AppointmentForm: React.FC<AppointmentFormProps> = ({
   doctor,
@@ -35,13 +23,15 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
     handleSubmit,
     watch,
     formState: { errors, isSubmitting },
-  } = useForm<AppointmentFormData>();
+  } = useForm<AppointmentFormValues>({
+    resolver: yupResolver(validationSchema),
+  });
 
   const selectedDate = watch("date");
   const availableDates = Object.keys(doctor.workingHours);
   const availableTime = selectedDate ? doctor.workingHours[selectedDate] : [];
 
-  const onFormSubmit = (data: AppointmentFormData) => {
+  const onFormSubmit = (data: AppointmentFormValues) => {
     onSubmit({ ...data });
   };
 
@@ -54,7 +44,6 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
           <Controller
             name="date"
             control={control}
-            rules={{ required: "Выберите день приема" }}
             render={({ field }) => (
               <select
                 {...field}
@@ -78,7 +67,6 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
           <Controller
             name="time"
             control={control}
-            rules={{ required: "Выберите время приема" }}
             render={({ field }) => (
               <select
                 {...field}
@@ -102,13 +90,6 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
           <Controller
             name="patientName"
             control={control}
-            rules={{
-              required: "Введите ваше имя",
-              minLength: {
-                value: 2,
-                message: "Имя должно содержать минимум 2 символа",
-              },
-            }}
             render={({ field }) => (
               <input
                 {...field}
@@ -129,13 +110,6 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
           <Controller
             name="patientPhone"
             control={control}
-            rules={{
-              required: "Введите ваш телефон",
-              pattern: {
-                value: /^[\+]?[0-9\s\-\(\)]+$/,
-                message: "Введите корректный номер телефона",
-              },
-            }}
             render={({ field }) => (
               <input
                 {...field}
