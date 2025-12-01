@@ -5,6 +5,7 @@ import type { AppointmentFormData, Doctor } from "../../types.ts";
 import { mockDoctors } from "../../__mockData__/mockDoctors.ts";
 import { DoctorCard } from "../../entities/DoctorCard/ui";
 import { AppointmentForm } from "../../features/AppointmentForm/ui";
+import type { AppointmentFormValues } from "../../features/AppointmentForm/model/types.ts";
 
 export const DoctorListPage: React.FC = () => {
   const { createAppointment } = useAppointments();
@@ -14,8 +15,13 @@ export const DoctorListPage: React.FC = () => {
     setSelectedDoctor(doctor);
   };
 
-  const handleSubmitAppointment = (data: AppointmentFormData) => {
-    createAppointment(data);
+  const handleSubmitAppointment = (formValues: AppointmentFormValues) => {
+    const appointmentData: AppointmentFormData = {
+      ...formValues,
+      doctorId: selectedDoctor!.id,
+    };
+
+    createAppointment(appointmentData);
     setSelectedDoctor(null);
     alert("Запись успешно создана!");
   };
