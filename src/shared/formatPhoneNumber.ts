@@ -1,8 +1,14 @@
 export const formatPhoneNumber = (value: string): string => {
-  if (!value) return value;
+  if (!value || value.trim() === "") return "";
 
   const phoneNumber = value.replace(/[^\d]/g, "");
   const phoneNumberLength = phoneNumber.length;
+
+  if (phoneNumberLength === 0) return "";
+
+  if (phoneNumberLength === 1 && (phoneNumber === "7" || phoneNumber === "8")) {
+    return "+7";
+  }
 
   if (phoneNumberLength < 2) return `+7${phoneNumber}`;
   if (phoneNumberLength < 5) return `+7 (${phoneNumber.slice(1, 4)}`;
