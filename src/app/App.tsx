@@ -1,7 +1,7 @@
 import styles from "./styles/styles.module.scss";
 import { HomePage } from "../pages/HomePage";
 import { Navbar } from "../shared/NavBar/ui";
-import { Route, BrowserRouter, Routes } from "react-router-dom";
+import { Route, BrowserRouter, Routes, Navigate } from "react-router-dom";
 import routesConfig from "./routesConfigDto.json";
 import { DoctorListPage } from "../pages/DoctorListPage";
 import { AppointmentListPage } from "../pages/AppointmentListPage";
@@ -52,6 +52,7 @@ function App() {
                   />
                 );
               })}
+              <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </main>
         </div>
