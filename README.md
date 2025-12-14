@@ -1,6 +1,25 @@
 # Запись на прием к врачу
 ## Запуск проекта
 
+
+# Health-Service
+
+## Backend
+
+cd backend
+copy .env.example .env
+composer install
+php artisan key:generate
+php artisan migrate --seed
+php artisan serve
+
+## Frontend
+
+cd frontend
+npm install
+npm run dev
+
+
 ```cmd
 npm run dev
 ```
