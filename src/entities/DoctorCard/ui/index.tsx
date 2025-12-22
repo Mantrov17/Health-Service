@@ -13,10 +13,12 @@ export const DoctorCard: React.FC<DoctorCardProps> = ({
 }) => {
   return (
     <div className={styles.card}>
-      <img src={doctor.avatar} className={styles.avatar} alt={doctor.name} />
+      {doctor.avatar && (
+        <img src={doctor.avatar} className={styles.avatar} alt={doctor.name} />
+      )}
       <div className={styles.info}>
         <h3 className={styles.name}>{doctor.name}</h3>
-        <p className={styles.specialization}>{doctor.specialization}</p>
+        <p className={styles.specialization}>{doctor.qualification}</p>
         <div className={styles.details}>
           <span>Опыт: {doctor.experience} лет</span>
           <span className={styles.rating}>★ {doctor.rating}</span>

@@ -1,0 +1,1073 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Health Service API",
+        "description": "API для системы записи к врачам",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "/api",
+            "description": "API Server"
+        }
+    ],
+    "paths": {
+        "/appointments": {
+            "post": {
+                "tags": [
+                    "Appointments"
+                ],
+                "summary": "Создать запись к врачу",
+                "operationId": "0cfd7a3482605b745b634d591966d8bf",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "slotId",
+                                    "userId"
+                                ],
+                                "properties": {
+                                    "slotId": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "userId": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Запись успешно создана",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "doctorId": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "slotId": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "startAt": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                        },
+                                        "endAt": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                        },
+                                        "status": {
+                                            "type": "string",
+                                            "example": "BOOKED"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Нельзя записаться на прошедший слот"
+                    },
+                    "409": {
+                        "description": "Слот уже занят"
+                    },
+                    "422": {
+                        "description": "Ошибка валидации"
+                    }
+                }
+            }
+        },
+        "/me/appointments": {
+            "get": {
+                "tags": [
+                    "Appointments"
+                ],
+                "summary": "Получить список записей пользователя (требует auth)",
+                "operationId": "7f1cb925d5408778d5e998abaf0679bd",
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "status": {
+                                                "type": "string",
+                                                "example": "BOOKED"
+                                            },
+                                            "doctorName": {
+                                                "type": "string",
+                                                "example": "Иванов Иван Иванович"
+                                            },
+                                            "qualification": {
+                                                "type": "string",
+                                                "example": "Терапевт"
+                                            },
+                                            "slotId": {
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "startAt": {
+                                                "type": "string",
+                                                "format": "date-time"
+                                            },
+                                            "endAt": {
+                                                "type": "string",
+                                                "format": "date-time"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/appointments/{appointment}/cancel": {
+            "post": {
+                "tags": [
+                    "Appointments"
+                ],
+                "summary": "Отменить запись",
+                "operationId": "358fce3ad52744f0d5736d0dffd7fc4a",
+                "parameters": [
+                    {
+                        "name": "appointment",
+                        "in": "path",
+                        "description": "ID записи",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Запись успешно отменена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Запись не найдена"
+                    }
+                }
+            }
+        },
+        "/auth/register": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Регистрация нового пользователя",
+                "operationId": "ed42f392010c301892e640067141676e",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "fullName",
+                                    "phone",
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "fullName": {
+                                        "type": "string",
+                                        "example": "Иван Иванов"
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "example": "+79991234567"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "ivan@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Пользователь успешно зарегистрирован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "user": {
+                                            "$ref": "#/components/schemas/User"
+                                        },
+                                        "accessToken": {
+                                            "type": "string",
+                                            "example": "1|xxxxxxxxxxxxxxxxxxxx"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации"
+                    }
+                }
+            }
+        },
+        "/auth/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Вход в систему",
+                "operationId": "8cb7742ae98d0990acb2907c4e00bf24",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "login",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "login": {
+                                        "description": "Email или телефон",
+                                        "type": "string",
+                                        "example": "ivan@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Успешный вход",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "user": {
+                                            "$ref": "#/components/schemas/User"
+                                        },
+                                        "accessToken": {
+                                            "type": "string",
+                                            "example": "2|xxxxxxxxxxxxxxxxxxxx"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Неверные учетные данные"
+                    }
+                }
+            }
+        },
+        "/auth/logout": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Выход из системы",
+                "operationId": "0d29c740dc06d77602af8095bf4654cc",
+                "responses": {
+                    "200": {
+                        "description": "Успешный выход",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Не авторизован"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/doctors": {
+            "get": {
+                "tags": [
+                    "Doctors"
+                ],
+                "summary": "Получить список всех врачей",
+                "operationId": "cd066ac893c261ef13773c81ebc8c53e",
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Doctor"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Doctors"
+                ],
+                "summary": "Создать нового врача",
+                "operationId": "08504526ddafe7c7f25782a3b582fb29",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "qualification"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Иванов Иван Иванович"
+                                    },
+                                    "qualification": {
+                                        "type": "string",
+                                        "example": "Терапевт"
+                                    },
+                                    "experience": {
+                                        "type": "integer",
+                                        "example": 10
+                                    },
+                                    "rating": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 4.5
+                                    },
+                                    "avatar": {
+                                        "type": "string",
+                                        "example": "https://example.com/avatar.jpg"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Врач успешно создан",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Doctor"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации"
+                    }
+                }
+            }
+        },
+        "/doctors/{id}": {
+            "get": {
+                "tags": [
+                    "Doctors"
+                ],
+                "summary": "Получить информацию о враче",
+                "operationId": "f7d27b7312d2bcfb24da4bf9b7109e21",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID врача",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Doctor"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Врач не найден"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Doctors"
+                ],
+                "summary": "Обновить информацию о враче",
+                "operationId": "c02c0964a85a8820b7be7c88a00c291a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID врача",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Иванов Иван Иванович"
+                                    },
+                                    "qualification": {
+                                        "type": "string",
+                                        "example": "Терапевт"
+                                    },
+                                    "experience": {
+                                        "type": "integer",
+                                        "example": 10
+                                    },
+                                    "rating": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 4.5
+                                    },
+                                    "avatar": {
+                                        "type": "string",
+                                        "example": "https://example.com/avatar.jpg"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Врач успешно обновлен",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Doctor"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Врач не найден"
+                    },
+                    "422": {
+                        "description": "Ошибка валидации"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Doctors"
+                ],
+                "summary": "Удалить врача",
+                "operationId": "7b7ef07af466dfd92e8b76108715130f",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID врача",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Врач успешно удален"
+                    },
+                    "404": {
+                        "description": "Врач не найден"
+                    }
+                }
+            }
+        },
+        "/doctors/{doctor}/slots": {
+            "get": {
+                "tags": [
+                    "Doctors",
+                    "Slots"
+                ],
+                "summary": "Получить свободные слоты врача",
+                "operationId": "e701dcd9488dddc96dd46c6bd5d4a75f",
+                "parameters": [
+                    {
+                        "name": "doctor",
+                        "in": "path",
+                        "description": "ID врача",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "from",
+                        "in": "query",
+                        "description": "Фильтр по дате начала (от)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date-time"
+                        }
+                    },
+                    {
+                        "name": "to",
+                        "in": "query",
+                        "description": "Фильтр по дате начала (до)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date-time"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "current_page": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Slot"
+                                            }
+                                        },
+                                        "total": {
+                                            "type": "integer",
+                                            "example": 100
+                                        },
+                                        "per_page": {
+                                            "type": "integer",
+                                            "example": 50
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Врач не найден"
+                    }
+                }
+            }
+        },
+        "/slots": {
+            "get": {
+                "tags": [
+                    "Slots"
+                ],
+                "summary": "Получить список всех слотов",
+                "operationId": "68e3fe2cd18891325bc0932238b68c39",
+                "parameters": [
+                    {
+                        "name": "doctor_id",
+                        "in": "query",
+                        "description": "Фильтр по ID врача",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Фильтр по статусу (FREE, BOOKED)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "FREE",
+                                "BOOKED"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "from",
+                        "in": "query",
+                        "description": "Фильтр по дате начала (от)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date-time"
+                        }
+                    },
+                    {
+                        "name": "to",
+                        "in": "query",
+                        "description": "Фильтр по дате начала (до)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date-time"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Slot"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Slots"
+                ],
+                "summary": "Создать новый слот",
+                "operationId": "6bbd0bcf7630b2d78e8c0378bb7a3c79",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "doctor_id",
+                                    "start_at",
+                                    "end_at"
+                                ],
+                                "properties": {
+                                    "doctor_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "start_at": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2025-12-25T09:00:00Z"
+                                    },
+                                    "end_at": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2025-12-25T09:30:00Z"
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "enum": [
+                                            "FREE",
+                                            "BOOKED"
+                                        ],
+                                        "example": "FREE"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Слот успешно создан",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Slot"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации"
+                    }
+                }
+            }
+        },
+        "/slots/{id}": {
+            "get": {
+                "tags": [
+                    "Slots"
+                ],
+                "summary": "Получить информацию о слоте",
+                "operationId": "0b6ffa2bccb48fd62b4b3febfbd33c9c",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID слота",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Slot"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Слот не найден"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Slots"
+                ],
+                "summary": "Обновить слот",
+                "operationId": "054a5ee0e2321e4ab76d334479aa6226",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID слота",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "doctor_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "start_at": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2025-12-25T09:00:00Z"
+                                    },
+                                    "end_at": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2025-12-25T09:30:00Z"
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "enum": [
+                                            "FREE",
+                                            "BOOKED"
+                                        ],
+                                        "example": "FREE"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Слот успешно обновлен",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Slot"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Слот не найден"
+                    },
+                    "422": {
+                        "description": "Ошибка валидации"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Slots"
+                ],
+                "summary": "Удалить слот",
+                "operationId": "7d474177a433d1e12c6dc3a595aa79b4",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID слота",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Слот успешно удален"
+                    },
+                    "404": {
+                        "description": "Слот не найден"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Appointment": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "user_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "doctor_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "slot_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "BOOKED",
+                            "CANCELLED"
+                        ],
+                        "example": "BOOKED"
+                    },
+                    "cancelled_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "Doctor": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Иванов Иван Иванович"
+                    },
+                    "qualification": {
+                        "type": "string",
+                        "example": "Терапевт"
+                    },
+                    "experience": {
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "rating": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 4.5
+                    },
+                    "avatar": {
+                        "type": "string",
+                        "example": "https://example.com/avatar.jpg"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "Slot": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "doctor_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "start_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-12-25T09:00:00Z"
+                    },
+                    "end_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-12-25T09:30:00Z"
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "FREE",
+                            "BOOKED"
+                        ],
+                        "example": "FREE"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "User": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "fullName": {
+                        "type": "string",
+                        "example": "Иван Иванов"
+                    },
+                    "phone": {
+                        "type": "string",
+                        "example": "+79991234567"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "ivan@example.com"
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "sanctum": {
+                "type": "http",
+                "bearerFormat": "token",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Appointments",
+            "description": "Appointments"
+        },
+        {
+            "name": "Auth",
+            "description": "Auth"
+        },
+        {
+            "name": "Doctors",
+            "description": "Doctors"
+        },
+        {
+            "name": "Slots",
+            "description": "Slots"
+        }
+    ]
+}

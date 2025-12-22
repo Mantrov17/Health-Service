@@ -1,8 +1,32 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import styles from "./styles.module.scss";
-import { mockProfileInfo } from "../../__mockData__/mockProfileInfo.ts";
+import { useAuth } from "../../shared/lib/AuthContext";
 
 export const ProfilePage: React.FC = () => {
+  const { user, logout, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate("/login");
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
+
+  // Redirect to login if not authenticated
+  React.useEffect(() => {
+    if (!isAuthenticated) {
+      navigate("/login");
+    }
+  }, [isAuthenticated, navigate]);
+
+  if (!user) {
+    return null;
+  }
+
   return (
     <div className={styles.page}>
       <div className={styles.header}>
@@ -11,30 +35,29 @@ export const ProfilePage: React.FC = () => {
 
       <div className={styles.profileCard}>
         <div className={styles.avatarSection}>
-          <div className={styles.avatar}>{mockProfileInfo.avatar}</div>
-          <h2 className={styles.name}>{mockProfileInfo.name}</h2>
+          <div className={styles.avatar}>
+            {user.fullName.charAt(0).toUpperCase()}
+          </div>
+          <h2 className={styles.name}>{user.fullName}</h2>
         </div>
 
         <div className={styles.infoSection}>
           <div className={styles.infoItem}>
             <span className={styles.label}>Email:</span>
-            <span className={styles.value}>{mockProfileInfo.email}</span>
+            <span className={styles.value}>{user.email}</span>
           </div>
 
           <div className={styles.infoItem}>
             <span className={styles.label}>Телефон:</span>
-            <span className={styles.value}>{mockProfileInfo.phone}</span>
-          </div>
-
-          <div className={styles.infoItem}>
-            <span className={styles.label}>Дата рождения:</span>
-            <span className={styles.value}>{mockProfileInfo.birthDate}</span>
+            <span className={styles.value}>{user.phone}</span>
           </div>
         </div>
 
         <div className={styles.actions}>
           <button className={styles.editButton}>Редактировать профиль</button>
-          <button className={styles.logoutButton}>Выйти</button>
+          <button className={styles.logoutButton} onClick={handleLogout}>
+            Выйти
+          </button>
         </div>
       </div>
     </div>
