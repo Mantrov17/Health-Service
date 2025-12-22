@@ -1,39 +1,56 @@
-import type { Doctor } from "../../../types.ts";
-import styles from "./styles.module.scss";
-import { Controller, useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { validationSchema } from "../lib/validationSchema.ts";
-import { formatPhoneNumber } from "../../../shared/formatPhoneNumber.ts";
-import type { AppointmentFormValues } from "../model/types.ts";
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import type { Doctor, Slot } from '../../../types.ts';
+import styles from './styles.module.scss';
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
+
+interface AppointmentFormProps {
+  doctor: Doctor;
+  slots: Slot[];
+  isLoadingSlots: boolean;
+  onSubmit: (slotId: number) => Promise<void>;
+  onCancel: () => void;
+}
 
 export const AppointmentForm = ({
   doctor,
+  slots,
+  isLoadingSlots,
   onSubmit,
   onCancel,
-}: {
-  doctor: Doctor;
-  onSubmit: (data: AppointmentFormValues) => void;
-  onCancel: () => void;
-}) => {
-  const {
-    control,
-    handleSubmit,
-    watch,
-    formState: { errors, isSubmitting },
-  } = useForm<AppointmentFormValues>({
-    resolver: yupResolver(validationSchema),
-  });
-
+}: AppointmentFormProps) => {
+  const [selectedSlot, setSelectedSlot] = useState<number | null>(null);
   const [isSuccess, setIsSuccess] = useState(false);
-  const selectedDate = watch("date");
-  const availableDates = Object.keys(doctor.workingHours);
-  const availableTime = selectedDate ? doctor.workingHours[selectedDate] : [];
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState('');
 
-  const onFormSubmit = async (data: AppointmentFormValues) => {
-    onSubmit({ ...data });
-    setIsSuccess(true);
+  // Group slots by date
+  const slotsByDate = slots.reduce(
+    (acc, slot) => {
+      const date = new Date(slot.start_at).toLocaleDateString('ru-RU');
+      if (!acc[date]) {
+        acc[date] = [];
+      }
+      acc[date].push(slot);
+      return acc;
+    },
+    {} as Record<string, Slot[]>
+  );
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedSlot) return;
+
+    setIsSubmitting(true);
+    setError('');
+
+    try {
+      await onSubmit(selectedSlot);
+      setIsSuccess(true);
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Ошибка при создании записи');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (isSuccess) {
@@ -44,18 +61,10 @@ export const AppointmentForm = ({
           <div className={styles.successIcon}>✓</div>
 
           <div className={styles.successActions}>
-            <Link
-              to="/appointments"
-              onClick={onCancel}
-              className={styles.appointmentsLink}
-            >
+            <Link to="/appointments" onClick={onCancel} className={styles.appointmentsLink}>
               Перейти к моим записям
             </Link>
-            <button
-              type="button"
-              onClick={onCancel}
-              className={styles.successButton}
-            >
+            <button type="button" onClick={onCancel} className={styles.successButton}>
               Закрыть
             </button>
           </div>
@@ -66,113 +75,60 @@ export const AppointmentForm = ({
 
   return (
     <div className={styles.overlay}>
-      <form className={styles.form} onSubmit={handleSubmit(onFormSubmit)}>
-        <h2 className={styles.title}>Запись к {doctor.name}</h2>
+      <form className={styles.form} onSubmit={handleSubmit}>
+        <h2 className={styles.title}>
+          Запись к {doctor.name}
+          <span className={styles.qualification}>{doctor.qualification}</span>
+        </h2>
 
-        <div className={styles.field}>
-          <Controller
-            name="date"
-            control={control}
-            render={({ field }) => (
-              <select
-                {...field}
-                className={`${styles.select} ${errors.date ? styles.error : ""}`}
-              >
-                <option value="">Выберите день</option>
-                {availableDates.map((date) => (
-                  <option key={date} value={date}>
-                    {date}
-                  </option>
-                ))}
-              </select>
-            )}
-          />
-          {errors.date && (
-            <span className={styles.errorMessage}>{errors.date.message}</span>
-          )}
-        </div>
+        {error && <div className={styles.error}>{error}</div>}
 
-        <div className={styles.field}>
-          <Controller
-            name="time"
-            control={control}
-            render={({ field }) => (
-              <select
-                {...field}
-                className={`${styles.select} ${errors.time ? styles.error : ""}`}
-              >
-                <option value="">Выберите время</option>
-                {availableTime.map((time) => (
-                  <option key={time} value={time}>
-                    {time}
-                  </option>
-                ))}
-              </select>
-            )}
-          />
-          {errors.time && (
-            <span className={styles.errorMessage}>{errors.time.message}</span>
-          )}
-        </div>
+        {isLoadingSlots ? (
+          <div className={styles.loading}>Загрузка доступного времени...</div>
+        ) : slots.length === 0 ? (
+          <div className={styles.noSlots}>У этого врача нет доступных слотов</div>
+        ) : (
+          <div className={styles.slotsContainer}>
+            {Object.entries(slotsByDate).map(([date, dateSlots]) => (
+              <div key={date} className={styles.dateGroup}>
+                <h3 className={styles.dateTitle}>{date}</h3>
+                <div className={styles.slotsGrid}>
+                  {dateSlots.map((slot) => {
+                    const startTime = new Date(slot.start_at).toLocaleTimeString('ru-RU', {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    });
+                    const endTime = new Date(slot.end_at).toLocaleTimeString('ru-RU', {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    });
 
-        <div className={styles.field}>
-          <Controller
-            name="patientName"
-            control={control}
-            render={({ field }) => (
-              <input
-                {...field}
-                type="text"
-                placeholder="Ваше имя"
-                className={`${styles.input} ${errors.patientName ? styles.error : ""}`}
-              />
-            )}
-          />
-          {errors.patientName && (
-            <span className={styles.errorMessage}>
-              {errors.patientName.message}
-            </span>
-          )}
-        </div>
-
-        <div className={styles.field}>
-          <Controller
-            name="patientPhone"
-            control={control}
-            render={({ field }) => (
-              <input
-                {...field}
-                type="tel"
-                placeholder="+7 (999) 999-99-99"
-                className={`${styles.input} ${errors.patientPhone ? styles.error : ""}`}
-                onChange={(e) => {
-                  const formattedValue = formatPhoneNumber(e.target.value);
-                  field.onChange(formattedValue);
-                }}
-                value={field.value || ""}
-              />
-            )}
-          />
-          {errors.patientPhone && (
-            <span className={styles.errorMessage}>
-              {errors.patientPhone.message}
-            </span>
-          )}
-        </div>
-
-        <div className={styles.field}>
-          <Controller
-            name="notes"
-            control={control}
-            render={({ field }) => (
-              <textarea
-                {...field}
-                placeholder="Дополнительные сведения"
-                className={styles.textarea}
-              />
-            )}
-          />
-        </div>
+                    return (
+                      <label
+                        key={slot.id}
+                        className={`${styles.slotOption} ${
+                          selectedSlot === slot.id ? styles.selected : ''
+                        }`}
+                      >
+                        <input
+                          type="radio"
+                          name="slot"
+                          value={slot.id}
+                          checked={selectedSlot === slot.id}
+                          onChange={() => setSelectedSlot(slot.id)}
+                          className={styles.slotRadio}
+                        />
+                        <span className={styles.slotTime}>
+                          {startTime} - {endTime}
+                        </span>
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
 
         <div className={styles.actions}>
           <button
@@ -186,9 +142,9 @@ export const AppointmentForm = ({
           <button
             type="submit"
             className={styles.submitButton}
-            disabled={isSubmitting}
+            disabled={isSubmitting || !selectedSlot || slots.length === 0}
           >
-            {isSubmitting ? "Идёт запись" : "Записаться"}
+            {isSubmitting ? 'Идёт запись...' : 'Записаться'}
           </button>
         </div>
       </form>

@@ -1,0 +1,84 @@
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: health-service-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: clinic
+      POSTGRES_USER: clinic_user
+      POSTGRES_PASSWORD: clinic_password
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U clinic_user -d clinic"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - health-service
+
+  # Laravel Backend (PHP-FPM)
+  backend:
+    build:
+      context: ./backend/vetclinic
+      dockerfile: Dockerfile
+    container_name: health-service-backend
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - ./backend/vetclinic:/var/www/html
+      - backend_vendor:/var/www/html/vendor
+    environment:
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_DATABASE=clinic
+      - DB_USERNAME=clinic_user
+      - DB_PASSWORD=clinic_password
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - health-service
+
+  # Nginx for Laravel API
+  backend-nginx:
+    image: nginx:alpine
+    container_name: health-service-backend-nginx
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - ./backend/vetclinic:/var/www/html
+      - ./backend/vetclinic/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - backend
+    networks:
+      - health-service
+
+  # React Frontend
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: health-service-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend-nginx
+    networks:
+      - health-service
+
+volumes:
+  postgres_data:
+    driver: local
+  backend_vendor:
+    driver: local
+
+networks:
+  health-service:
+    driver: bridge

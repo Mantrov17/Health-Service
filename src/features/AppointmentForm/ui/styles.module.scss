@@ -240,3 +240,74 @@
     gap: 0.5rem;
   }
 }
+.loading,
+.noSlots {
+  padding: 20px;
+  text-align: center;
+  color: #666;
+}
+
+.qualification {
+  display: block;
+  font-size: 14px;
+  color: #666;
+  font-weight: 400;
+  margin-top: 5px;
+}
+
+.slotsContainer {
+  max-height: 400px;
+  overflow-y: auto;
+  margin: 20px 0;
+}
+
+.dateGroup {
+  margin-bottom: 25px;
+}
+
+.dateTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #eee;
+}
+
+.slotsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 10px;
+}
+
+.slotOption {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: white;
+
+  &:hover {
+    border-color: #667eea;
+    background: #f8f9ff;
+  }
+
+  &.selected {
+    border-color: #667eea;
+    background: #667eea;
+    color: white;
+  }
+}
+
+.slotRadio {
+  display: none;
+}
+
+.slotTime {
+  font-size: 14px;
+  font-weight: 500;
+}

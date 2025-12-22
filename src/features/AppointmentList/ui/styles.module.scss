@@ -111,3 +111,16 @@
     min-width: auto;
   }
 }
+.cancelled {
+  opacity: 0.6;
+}
+
+.statusBooked {
+  color: #22c55e;
+  font-weight: 600;
+}
+
+.statusCancelled {
+  color: #ef4444;
+  font-weight: 600;
+}

@@ -7,19 +7,52 @@ use App\Models\Slot;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
+use OpenApi\Attributes as OA;
 
 class AppointmentController extends Controller
 {
-    // POST /api/appointments
+    #[OA\Post(
+        path: "/appointments",
+        summary: "Создать запись к врачу",
+        tags: ["Appointments"],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ["slotId", "userId"],
+                properties: [
+                    new OA\Property(property: "slotId", type: "integer", example: 1),
+                    new OA\Property(property: "userId", type: "integer", example: 1),
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(
+                response: 201,
+                description: "Запись успешно создана",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "id", type: "integer", example: 1),
+                        new OA\Property(property: "doctorId", type: "integer", example: 1),
+                        new OA\Property(property: "slotId", type: "integer", example: 1),
+                        new OA\Property(property: "startAt", type: "string", format: "date-time"),
+                        new OA\Property(property: "endAt", type: "string", format: "date-time"),
+                        new OA\Property(property: "status", type: "string", example: "BOOKED"),
+                    ]
+                )
+            ),
+            new OA\Response(response: 400, description: "Нельзя записаться на прошедший слот"),
+            new OA\Response(response: 409, description: "Слот уже занят"),
+            new OA\Response(response: 422, description: "Ошибка валидации")
+        ]
+    )]
     public function store(Request $request)
     {
         $data = $request->validate([
             'slotId' => ['required', 'integer', 'exists:slots,id'],
+            'userId' => ['required', 'integer', 'exists:users,id'],
         ]);
 
-        $user = $request->user();
-
-        return \Illuminate\Support\Facades\DB::transaction(function () use ($data, $user) {
+        return \Illuminate\Support\Facades\DB::transaction(function () use ($data) {
 
             // 1) Блокируем слот на время транзакции
             $slot = \App\Models\Slot::query()
@@ -52,7 +85,7 @@ class AppointmentController extends Controller
 
             // 4) Создаём запись
             $appointment = \App\Models\Appointment::query()->create([
-                'user_id'   => $user->id,
+                'user_id'   => $data['userId'],
                 'doctor_id' => $slot->doctor_id,
                 'slot_id'   => $slot->id,
                 'status'    => 'BOOKED',
@@ -74,7 +107,31 @@ class AppointmentController extends Controller
         });
     }
 
-    // GET /api/me/appointments
+    #[OA\Get(
+        path: "/me/appointments",
+        summary: "Получить список записей пользователя (требует auth)",
+        tags: ["Appointments"],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Успешный ответ",
+                content: new OA\JsonContent(
+                    type: "array",
+                    items: new OA\Items(
+                        properties: [
+                            new OA\Property(property: "id", type: "integer", example: 1),
+                            new OA\Property(property: "status", type: "string", example: "BOOKED"),
+                            new OA\Property(property: "doctorName", type: "string", example: "Иванов Иван Иванович"),
+                            new OA\Property(property: "qualification", type: "string", example: "Терапевт"),
+                            new OA\Property(property: "slotId", type: "integer", example: 1),
+                            new OA\Property(property: "startAt", type: "string", format: "date-time"),
+                            new OA\Property(property: "endAt", type: "string", format: "date-time"),
+                        ]
+                    )
+                )
+            )
+        ]
+    )]
     public function myAppointments(Request $request)
     {
         $userId = $request->user()->id;
@@ -96,12 +153,34 @@ class AppointmentController extends Controller
         return response()->json($items);
     }
 
-    // POST /api/appointments/{appointment}/cancel
+    #[OA\Post(
+        path: "/appointments/{appointment}/cancel",
+        summary: "Отменить запись",
+        tags: ["Appointments"],
+        parameters: [
+            new OA\Parameter(
+                name: "appointment",
+                in: "path",
+                required: true,
+                description: "ID записи",
+                schema: new OA\Schema(type: "integer")
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Запись успешно отменена",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "success", type: "boolean", example: true),
+                    ]
+                )
+            ),
+            new OA\Response(response: 404, description: "Запись не найдена")
+        ]
+    )]
     public function cancel(Appointment $appointment, Request $request)
     {
-        if ($appointment->user_id !== $request->user()->id) {
-            abort(403, 'Forbidden');
-        }
 
         if ($appointment->status === 'CANCELLED') {
             return response()->json(['success' => true]); // идемпотентно
